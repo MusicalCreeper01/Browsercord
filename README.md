@@ -90,6 +90,10 @@ Options are:
 
 If you want to create a 2 step forum for MFA (like in the Discord client), first get the username and password and store them as variables then call '#.requiresMFA(email, password, callback)'. If it returns `true` then you can proceed to ask for an MFA code, and then set the options accordingly and initialize an instance of the library.
 
+## Note on reauth and token save
+
+When the token is saved in the local storage (key: 'discord_token') the email used to generate the token is also saved (key: 'discord_email'). This way the library knows if your logging in with a different account, so it knows to fetch a new token.
+
 # Events
 
 ## Main events
@@ -101,8 +105,21 @@ These events are accessable from the library instance with #.on('eventname', cal
 * `tokenInvalid`: Called when the stored token is invalid
 * `error`: Called when any error occurs 
 * `call`: Called when a user is calling you
+* `message`: Called when a new message is recived
+* `delete`: Called when a message is deleted
+* `edited`: Called when a message is edited
+
+## Gateway Events
+
+Gateway events can be accessed via `#.gateway.on('eventname', callback)`, event name is the same event name as seen in the documentation here (https://discordapp.com/developers/docs/topics/gateway#events) and used in the packets.
+
+## Voice Events
+
+Voice events can be accessed with `#.voice.on('eventname', callback)`.
+
+* `ready`: Called when fully connected to the voice servers, good point to apply speech detection 
+* 'disconnected': Fired when the voice connection is unexpectedly closed 
+* `closed`: Fied when the voice connect is manually closed
 
 
-## Note on reauth and token save
 
-When the token is saved in the local storage (key: 'discord_token') the email used to generate the token is also saved (key: 'discord_email'). This way the library knows if your logging in with a different account, so it knows to fetch a new token.
