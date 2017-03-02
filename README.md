@@ -17,6 +17,7 @@ Now since the RTC servers are undocumented they may change at any time without w
 # Installation
 
 Simply download the browsercord.js file and include it in your page, it's that simple! 
+
 Note that at the moment there isn't a minified version of the file, I'll get around to that later on. You can minify it yourself, but be aware that the SDP object at the top of the file MUST have it's strucute preserved or it will cause issues with generating the remote description.
 
 Although not required, I would also recommend using adapter.js (https://github.com/webrtc/adapter) to ensure that Browsercord works with browsers that add prefixs to some of the WebRTC functions.
@@ -66,3 +67,42 @@ d.voice.on('ready', function(){ // voice has connected to the channel and is tra
 	});
 })
 ```
+
+# Usage
+
+First you'll need to create a new instance of the `discord` object, and pass it your options.
+
+```JavaScript
+var d = discord({options})
+```
+
+Options are:
+* `email`: The user's email (unnecessary if token is supplied)
+* `password`: The user's password (unnecessary if token is supplied)
+* `token`: The OAuth token to use for requests (unnecessary if email and password are supplied)
+* 'save': Wether to save the token in local storage of not (default `true`)
+* 'mfa': If the user has MFA enabled, the MFA code to use for authentication (note on this below)
+* 'reconnect': If disconnected from voice (i.e you connected from another device), should we automatically reconnect? (default `false`)
+* 'device': The type of device to tell Discord your connecting from. (e.g `windows`, `linux`, `GearS3`) (default `Browsercord`)
+* 'reauth': Forces clearing of the saved token (if saved) and fetching of a new one.
+
+## Note on MFA
+
+If you want to create a 2 step forum for MFA (like in the Discord client), first get the username and password and store them as variables then call '#.requiresMFA(email, password, callback)'. If it returns `true` then you can proceed to ask for an MFA code, and then set the options accordingly and initialize an instance of the library.
+
+# Events
+
+## Main events
+
+These events are accessable from the library instance with #.on('eventname', callback).
+
+* `loggedIn`: Called when the library has successfully gotten the token, or retived it from storage and validated it
+* 'ready': Called when the library has connected to the gateway. You can now connect to voice servers and make calls. 
+* `tokenInvalid`: Called when the stored token is invalid
+* `error`: Called when any error occurs 
+* `call`: Called when a user is calling you
+
+
+## Note on reauth and token save
+
+When the token is saved in the local storage (key: 'discord_token') the email used to generate the token is also saved (key: 'discord_email'). This way the library knows if your logging in with a different account, so it knows to fetch a new token.
